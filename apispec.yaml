@@ -1,0 +1,129 @@
+openapi: "3.0.2"
+info:
+  version: "1.0"
+  title: Welcome to my ToDo API!
+  description: This API allows users to add view todos
+servers:
+  - url: "http://localhost:5001/"
+    description: Development server
+paths:
+  /todo:
+    get:
+      summary: Return a list of todos
+      description: Get the todos
+      tags:
+        - todo
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ToDoArray"
+              example:
+                - id: 1
+                  description: "example todo 1"
+                - id: 2
+                  description: "example todo 2"
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    post:
+      summary: Creates a new todo
+      description: Create a new todo
+      tags:
+        - todo
+      requestBody:
+        description: the new todo
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NewToDo"
+      responses:
+        201:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ToDo"
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /todo/{todoId}:
+    get:
+      summary: Returns a a single todo
+      description: Get a todo
+      tags:
+        - todo
+      parameters:
+        - in: path
+          name: todoId
+          schema:
+            type: integer
+          required: true
+          description: Todo identifier
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ToDo"
+              example:
+                id: 1
+                description: "example todo 1"
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+components:
+  schemas:
+    ToDoArray:
+      type: array
+      items:
+        $ref: "#/components/schemas/ToDo"
+    ToDo:
+      type: object
+      properties:
+        id:
+          type: integer
+        description:
+          type: string
+    NewToDo:
+      type: object
+      properties:
+        description:
+          type: string
+      required:
+        - description
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+
+tags:
+  - name: todo
